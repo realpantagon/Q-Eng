@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchQueues } from '../Utils/airtableApi';
-import QueueCard from '../Components/QueueCard'; // Correct import path for QueueCard
+import QueueCard from '../Components/QueueCard';
 
 const DisplayQueue = () => {
   const [latestQueue, setLatestQueue] = useState(null);
@@ -13,12 +13,34 @@ const DisplayQueue = () => {
         const sortedQueues = data.sort((a, b) =>
           new Date(b.fields.Created) - new Date(a.fields.Created)
         );
-        setLatestQueue(sortedQueues[0]); // Take the latest queue
+        const newLatestQueue = sortedQueues[0];
+
+        // If the latest queue changes, trigger text-to-speech
+        if (!latestQueue || newLatestQueue.id !== latestQueue.id) {
+          setLatestQueue(newLatestQueue);
+          speakQueue(newLatestQueue.fields); // Call the TTS function
+        }
       }
     }, 1000); // Fetch data every second
 
     return () => clearInterval(interval); // Clean up the interval on unmount
-  }, []);
+  }, [latestQueue]);
+
+  // Function to perform text-to-speech
+  const speakQueue = (queue) => {
+    if (!queue || !queue.purpose) return;
+
+    const message = `Now calling: ${queue.purpose}`;
+    const speech = new SpeechSynthesisUtterance(message);
+
+    // Set voice and speech parameters (optional)
+    speech.lang = 'en-US'; // Language
+    speech.pitch = 1; // Pitch (default is 1)
+    speech.rate = 1; // Speed (default is 1)
+    speech.volume = 1; // Volume (range is 0 to 1)
+
+    window.speechSynthesis.speak(speech);
+  };
 
   return (
     <div>
