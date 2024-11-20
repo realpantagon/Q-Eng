@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './Components/Header';
-import DisplayQueue from './Pages/DisplayQueue';
-import ManageQueue from './Pages/ManageQueue';
-import RequestQueue from './Pages/RequestQueue';
+import DisplayQueue from './View/DisplayQueue';
+import ManageQueue from './View/ManageQueue';
+import RequestQueue from './View/RequestQueue';
+
 
 
 const App = () => {
